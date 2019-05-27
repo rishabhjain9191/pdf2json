@@ -32,18 +32,18 @@ let PDFParser = (function () {
 		}
 	};
 
-	let _onPDFJSParserDataError = function(data) {
+	let _onPDFJSParserDataError = function(data, options) {
 		this.data = null;
 		this.emit("pdfParser_dataError", {"parserError": data});
 	};
 
-	let _startParsingPDF = function(buffer) {
+	let _startParsingPDF = function(buffer, options) {
 		this.data = {};
 
 		this.PDFJS.on("pdfjs_parseDataReady", _onPDFJSParseDataReady.bind(this));
 		this.PDFJS.on("pdfjs_parseDataError", _onPDFJSParserDataError.bind(this));
 
-		this.PDFJS.parsePDFData(buffer || _binBuffer[this.pdfFilePath]);
+    this.PDFJS.parsePDFData(buffer || _binBuffer[this.pdfFilePath], options);
 	};
 
 	let _processBinaryCache = function() {
@@ -146,8 +146,8 @@ let PDFParser = (function () {
 	};
 
 	// Introduce a way to directly process buffers without the need to write it to a temporary file
-	PdfParser.prototype.parseBuffer = function(pdfBuffer) {
-		_startParsingPDF.call(this, pdfBuffer);
+	PdfParser.prototype.parseBuffer = function(pdfBuffer, options) {
+		_startParsingPDF.call(this, pdfBuffer, options);
 	};
 
 	PdfParser.prototype.getRawTextContent = function() { return this.PDFJS.getRawTextContent(); };
